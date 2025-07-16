@@ -1,0 +1,231 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: LuminolMC CI <ci@luminolmc.com>
+Date: Thu, 17 Jul 2025 07:18:08 +0800
+Subject: [PATCH] SpeedTrain: Remove hardcoded minecart speed limits
+
+
+diff --git a/net/minecraft/world/entity/vehicle/AbstractMinecart.java b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
+index 7e61d68b36ca2768f70dc1fc130a8d7b95347b6b..ab61fe70d42239b9a3725b50518be09ef70a7816 100644
+--- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
++++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
+@@ -46,11 +46,11 @@ import net.minecraft.world.phys.Vec3;
+ public abstract class AbstractMinecart extends VehicleEntity {
+     private static final Vec3 LOWERED_PASSENGER_ATTACHMENT = new Vec3(0.0, 0.0, 0.0);
+     private static final EntityDataAccessor<Optional<BlockState>> DATA_ID_CUSTOM_DISPLAY_BLOCK = SynchedEntityData.defineId(
+-        AbstractMinecart.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE
++            AbstractMinecart.class, EntityDataSerializers.OPTIONAL_BLOCK_STATE
+     );
+     private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_OFFSET = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
+     private static final ImmutableMap<Pose, ImmutableList<Integer>> POSE_DISMOUNT_HEIGHTS = ImmutableMap.of(
+-        Pose.STANDING, ImmutableList.of(0, 1, -1), Pose.CROUCHING, ImmutableList.of(0, 1, -1), Pose.SWIMMING, ImmutableList.of(0, 1)
++            Pose.STANDING, ImmutableList.of(0, 1, -1), Pose.CROUCHING, ImmutableList.of(0, 1, -1), Pose.SWIMMING, ImmutableList.of(0, 1)
+     );
+     protected static final float WATER_SLOWDOWN_FACTOR = 0.95F;
+     private static final boolean DEFAULT_FLIPPED_ROTATION = false;
+@@ -58,40 +58,40 @@ public abstract class AbstractMinecart extends VehicleEntity {
+     private boolean flipped = false;
+     private final MinecartBehavior behavior;
+     private static final Map<RailShape, Pair<Vec3i, Vec3i>> EXITS = Maps.newEnumMap(
+-        Util.make(
+-            () -> {
+-                Vec3i unitVec3i = Direction.WEST.getUnitVec3i();
+-                Vec3i unitVec3i1 = Direction.EAST.getUnitVec3i();
+-                Vec3i unitVec3i2 = Direction.NORTH.getUnitVec3i();
+-                Vec3i unitVec3i3 = Direction.SOUTH.getUnitVec3i();
+-                Vec3i vec3i = unitVec3i.below();
+-                Vec3i vec3i1 = unitVec3i1.below();
+-                Vec3i vec3i2 = unitVec3i2.below();
+-                Vec3i vec3i3 = unitVec3i3.below();
+-                return ImmutableMap.of(
+-                    RailShape.NORTH_SOUTH,
+-                    Pair.of(unitVec3i2, unitVec3i3),
+-                    RailShape.EAST_WEST,
+-                    Pair.of(unitVec3i, unitVec3i1),
+-                    RailShape.ASCENDING_EAST,
+-                    Pair.of(vec3i, unitVec3i1),
+-                    RailShape.ASCENDING_WEST,
+-                    Pair.of(unitVec3i, vec3i1),
+-                    RailShape.ASCENDING_NORTH,
+-                    Pair.of(unitVec3i2, vec3i3),
+-                    RailShape.ASCENDING_SOUTH,
+-                    Pair.of(vec3i2, unitVec3i3),
+-                    RailShape.SOUTH_EAST,
+-                    Pair.of(unitVec3i3, unitVec3i1),
+-                    RailShape.SOUTH_WEST,
+-                    Pair.of(unitVec3i3, unitVec3i),
+-                    RailShape.NORTH_WEST,
+-                    Pair.of(unitVec3i2, unitVec3i),
+-                    RailShape.NORTH_EAST,
+-                    Pair.of(unitVec3i2, unitVec3i1)
+-                );
+-            }
+-        )
++            Util.make(
++                    () -> {
++                        Vec3i unitVec3i = Direction.WEST.getUnitVec3i();
++                        Vec3i unitVec3i1 = Direction.EAST.getUnitVec3i();
++                        Vec3i unitVec3i2 = Direction.NORTH.getUnitVec3i();
++                        Vec3i unitVec3i3 = Direction.SOUTH.getUnitVec3i();
++                        Vec3i vec3i = unitVec3i.below();
++                        Vec3i vec3i1 = unitVec3i1.below();
++                        Vec3i vec3i2 = unitVec3i2.below();
++                        Vec3i vec3i3 = unitVec3i3.below();
++                        return ImmutableMap.of(
++                                RailShape.NORTH_SOUTH,
++                                Pair.of(unitVec3i2, unitVec3i3),
++                                RailShape.EAST_WEST,
++                                Pair.of(unitVec3i, unitVec3i1),
++                                RailShape.ASCENDING_EAST,
++                                Pair.of(vec3i, unitVec3i1),
++                                RailShape.ASCENDING_WEST,
++                                Pair.of(unitVec3i, vec3i1),
++                                RailShape.ASCENDING_NORTH,
++                                Pair.of(unitVec3i2, vec3i3),
++                                RailShape.ASCENDING_SOUTH,
++                                Pair.of(vec3i2, unitVec3i3),
++                                RailShape.SOUTH_EAST,
++                                Pair.of(unitVec3i3, unitVec3i1),
++                                RailShape.SOUTH_WEST,
++                                Pair.of(unitVec3i3, unitVec3i),
++                                RailShape.NORTH_WEST,
++                                Pair.of(unitVec3i2, unitVec3i),
++                                RailShape.NORTH_EAST,
++                                Pair.of(unitVec3i2, unitVec3i1)
++                        );
++                    }
++            )
+     );
+     // CraftBukkit start
+     public boolean slowWhenEmpty = true;
+@@ -129,7 +129,7 @@ public abstract class AbstractMinecart extends VehicleEntity {
+ 
+     @Nullable
+     public static <T extends AbstractMinecart> T createMinecart(
+-        Level level, double x, double y, double z, EntityType<T> type, EntitySpawnReason spawnReason, ItemStack spawnedFrom, @Nullable Player player
++            Level level, double x, double y, double z, EntityType<T> type, EntitySpawnReason spawnReason, ItemStack spawnedFrom, @Nullable Player player
+     ) {
+         T abstractMinecart = (T)type.create(level, spawnReason);
+         if (abstractMinecart != null) {
+@@ -209,10 +209,10 @@ public abstract class AbstractMinecart extends VehicleEntity {
+                     for (int[] ints1 : ints) {
+                         mutableBlockPos.set(blockPos.getX() + ints1[0], blockPos.getY() + i, blockPos.getZ() + ints1[1]);
+                         double blockFloorHeight = this.level()
+-                            .getBlockFloorHeight(
+-                                DismountHelper.nonClimbableShape(this.level(), mutableBlockPos),
+-                                () -> DismountHelper.nonClimbableShape(this.level(), mutableBlockPos.below())
+-                            );
++                                .getBlockFloorHeight(
++                                        DismountHelper.nonClimbableShape(this.level(), mutableBlockPos),
++                                        () -> DismountHelper.nonClimbableShape(this.level(), mutableBlockPos.below())
++                                );
+                         if (DismountHelper.isBlockFloorValid(blockFloorHeight)) {
+                             AABB aabb = new AABB(-f, 0.0, -f, f, dimensions.height(), f);
+                             Vec3 vec3 = Vec3.upFromBottomCenterOf(mutableBlockPos, blockFloorHeight);
+@@ -337,9 +337,16 @@ public abstract class AbstractMinecart extends VehicleEntity {
+         return new BlockPos(floor, floor1, floor2);
+     }
+ 
++    // SpeedTrain start - 支持插件设置的高速度
+     protected double getMaxSpeed(ServerLevel level) {
++        // CraftBukkit start - 优先使用插件设置的最大速度
++        if (this.maxSpeed != null) {
++            return this.maxSpeed;
++        }
++        // CraftBukkit end
+         return this.behavior.getMaxSpeed(level);
+     }
++    // SpeedTrain end
+ 
+     public void activateMinecart(int x, int y, int z, boolean powered) {
+     }
+@@ -515,6 +522,31 @@ public abstract class AbstractMinecart extends VehicleEntity {
+             }
+         });
+         // Paper end - Friction API
++
++        // SpeedTrain start - 恢复高速矿车的保存速度
++        // 在Entity.load中，速度被限制在10.0以内，我们需要重新恢复原始速度
++        input.read("Motion", Vec3.CODEC).ifPresent(savedMotion -> {
++            // 检查是否有任何轴的速度超过了10.0（被Entity.load重置的速度）
++            Vec3 currentMotion = this.getDeltaMovement();
++            boolean wasLimited = false;
++
++            // 如果当前速度为0但保存的速度不为0，说明被限制了
++            if ((currentMotion.x == 0.0 && savedMotion.x != 0.0 && Math.abs(savedMotion.x) > 10.0) ||
++                    (currentMotion.z == 0.0 && savedMotion.z != 0.0 && Math.abs(savedMotion.z) > 10.0)) {
++                wasLimited = true;
++            }
++
++            if (wasLimited) {
++                // 恢复原始的高速度（Y轴保持限制以避免无限飞行）
++                this.setDeltaMovement(
++                        savedMotion.x,
++                        Math.abs(savedMotion.y) > 10.0 ? 0.0 : savedMotion.y,
++                        savedMotion.z
++                );
++                this.hasImpulse = true;
++            }
++        });
++        // SpeedTrain end
+     }
+ 
+     @Override
+@@ -542,8 +574,8 @@ public abstract class AbstractMinecart extends VehicleEntity {
+                 if (!this.hasPassenger(entity)) {
+                     // CraftBukkit start
+                     org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent(
+-                        (org.bukkit.entity.Vehicle) this.getBukkitEntity(),
+-                        entity.getBukkitEntity()
++                            (org.bukkit.entity.Vehicle) this.getBukkitEntity(),
++                            entity.getBukkitEntity()
+                     );
+                     if (!collisionEvent.callEvent()) return;
+                     // CraftBukkit end
+@@ -677,4 +709,4 @@ public abstract class AbstractMinecart extends VehicleEntity {
+         this.derailedZ = derailed.getZ();
+     }
+     // CraftBukkit end
+-}
++}
+\ No newline at end of file
+diff --git a/net/minecraft/world/entity/vehicle/Minecart.java b/net/minecraft/world/entity/vehicle/Minecart.java
+index 2199f2a54cb54df81b6a93a75b5678acaa9316c0..dea43b8027a63da48d5c45d180515093cdd2d331 100644
+--- a/net/minecraft/world/entity/vehicle/Minecart.java
++++ b/net/minecraft/world/entity/vehicle/Minecart.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world.entity.vehicle;
+ 
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+@@ -65,6 +66,22 @@ public class Minecart extends AbstractMinecart {
+         return true;
+     }
+ 
++    // SpeedTrain start - 为空矿车提供高速度支持
++    @Override
++    protected double getMaxSpeed(ServerLevel level) {
++        // CraftBukkit start - 优先使用插件设置的最大速度
++        if (this.maxSpeed != null) {
++            return this.maxSpeed;
++        }
++        // CraftBukkit end
++
++        // SpeedTrain - 为空矿车提供更高的默认速度限制
++        // 移除原来的硬编码 8 blocks/second 限制
++        // 这样插件就可以设置更高的速度而不被服务端限制
++        return 50.0D; // 1000 blocks/second，给插件充足的设置空间
++    }
++    // SpeedTrain end
++
+     @Override
+     public void tick() {
+         double d = this.getYRot();
+@@ -86,4 +103,4 @@ public class Minecart extends AbstractMinecart {
+             this.playerRotationOffset = f;
+         }
+     }
+-}
++}:
+\ No newline at end of file
